@@ -35,7 +35,7 @@ end
     action :add
     username u[:name]
     password u[:password]
-    root u[:root]
+    root u[:root] || node[:vsftpd][:local_root]
     local_user u[:local_user] if u[:local_user]
   end
 end
