@@ -293,8 +293,24 @@ default[:vsftpd][:guest_enable] = false
 # include listen_address, banner_file, max_per_ip, max_clients, xferlog_file, etc.
 default[:vsftpd][:user_config_dir] = "/etc/vsftpd/users"
 #
+
+default[:vsftpd][:credential_storage] = "file"
+
+# File storage options
 # Where should vsfptd pam.d look for user passwords
 default[:vsftpd][:user_passwd_file] = "/etc/vsftpd/.passwd"
+
+# Mysql storage options
+default[:vsftpd][:mysql][:host]                   =   "localhost"
+default[:vsftpd][:mysql][:database]               =   "vsftpd"
+default[:vsftpd][:mysql][:user]                   =   "vsftpd"
+default[:vsftpd][:mysql][:password]               =   "vsftpd"
+default[:vsftpd][:mysql][:allow_remote_login]     =   false
+
+default[:vsftpd][:mysql][:table]                  =   "accounts"
+default[:vsftpd][:mysql][:user_column]            =   "username"
+default[:vsftpd][:mysql][:password_column]        =   "password"
+
 #
 # If enabled, virtual users will use the same privileges as local users.
 # By default, virtual users will use the same privileges as anonymous users,

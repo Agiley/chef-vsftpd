@@ -1,8 +1,15 @@
-package "libpam-pwdfile"
 package "openssl"
 
+case node[:vsftpd][:credential_storage].to_sym
+  when :file
+    package "libpam-pwdfile"
+  when :mysql
+    include_recipe "vsftpd::mysql"
+    package "libpam-mysql"
+end
+
 template "/etc/pam.d/vsftpd" do
-  source "vsftpd-pam.erb"
+  source "#{node[:vsftpd][:credential_storage]}/vsftpd-pam.erb"
   owner "root"
   group "root"
   mode 0644
@@ -22,7 +29,9 @@ end
     recursive true
     mode u[:mode]
   end
+  
   vsftpd_user u[:name] do
+    provider "vsftpd_user_#{node[:vsftpd][:credential_storage]}"
     action :add
     username u[:name]
     password u[:password]

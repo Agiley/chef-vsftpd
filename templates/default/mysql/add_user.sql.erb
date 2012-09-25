@@ -1,0 +1,1 @@
+INSERT INTO `<%= node[:vsftpd][:mysql][:database] %>`.`<%= node[:vsftpd][:mysql][:table] %>` (`<%= node[:vsftpd][:mysql][:user_column] %>`, `<%= node[:vsftpd][:mysql][:password_column] %>`) VALUES('<%= @user %>', PASSWORD('<%= @password %>'));

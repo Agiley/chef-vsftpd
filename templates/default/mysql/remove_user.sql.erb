@@ -1,0 +1,1 @@
+DELETE FROM `<%= node[:vsftpd][:mysql][:database] %>`.`<%= node[:vsftpd][:mysql][:table] %>` WHERE `<%= node[:vsftpd][:mysql][:user_column] %>` = '<%= @user %>';
