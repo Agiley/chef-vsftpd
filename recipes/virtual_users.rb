@@ -23,19 +23,23 @@ directory node[:vsftpd][:user_config_dir] do
 end
 
 (node[:vsftpd][:virtual_users] || []).each do |u|
-  directory u[:root].gsub('/./','/') do
-    owner u[:local_user] || node[:vsftpd][:guest_username]
-    group u[:group]
-    recursive true
-    mode u[:mode]
+  root_path = u[:root] ? u[:root] : node[:vsftpd][:local_root]
+  
+  if (u[:create_dir])
+    directory root_path.gsub('/./','/') do
+      owner       u[:local_user] || node[:vsftpd][:guest_username]
+      group       u[:group] || node[:vsftpd][:guest_username]
+      recursive   true
+      mode        u[:mode]
+    end
   end
   
   vsftpd_user u[:name] do
     provider "vsftpd_user_#{node[:vsftpd][:credential_storage]}"
-    action :add
-    username u[:name]
-    password u[:password]
-    root u[:root] || node[:vsftpd][:local_root]
-    local_user u[:local_user] if u[:local_user]
+    action      :add
+    username    u[:name]
+    password    u[:password]
+    root        root_path
+    local_user  u[:local_user] if u[:local_user]
   end
 end
