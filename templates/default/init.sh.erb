@@ -1,0 +1,71 @@
+#!/bin/bash
+#
+# vsftpd      This shell script takes care of starting and stopping
+#             standalone vsftpd.
+#
+# chkconfig: - 60 50
+# description: Vsftpd is a ftp daemon, which is the program \
+#              that answers incoming ftp service requests.
+# processname: vsftpd
+# config: /etc/vsftpd/vsftpd.conf
+
+set -e
+
+. /lib/lsb/init-functions
+
+DAEMON=<%= @node[:vsftpd][:binary_path] %>
+CONFIG="/etc/vsftpd.conf"
+NAME="vsftpd"
+DESC="ftp service"
+VSFTPD_OPTS=
+PID="/var/run/$NAME.pid"
+
+# Check if DAEMON binary exist
+[ -f $DAEMON ] || exit 0
+
+case "$1" in
+  start)
+    log_daemon_msg "Starting $DESC" "$NAME"
+    if start-stop-daemon --start --quiet --oknodo \
+                         --pidfile $PID --exec $DAEMON \
+                         -- $VSFTPD_OPTS
+    then
+      log_end_msg 0
+    else
+      log_end_msg 1
+    fi
+    ;;
+  stop)
+    log_daemon_msg "Stopping $DESC" "$NAME"
+    if start-stop-daemon --retry TERM/5/KILL/5 --oknodo --stop --quiet \
+                         --pidfile $PID --exec $DAEMON
+    then
+      log_end_msg 0
+    else
+      log_end_msg 1
+    fi
+    ;;
+  reload)
+    log_daemon_msg "Reloading $DESC configuration" "$NAME"
+    if start-stop-daemon --stop --signal HUP --quiet \
+                                --oknodo --pidfile $PID \
+                                --exec $DAEMON -- $VSFTPD_OPTS
+    then
+      log_end_msg 0
+    else
+      log_end_msg 1
+  fi
+    ;;
+  restart|force-reload)
+    $0 stop
+    $0 start
+    ;;
+  status)
+    status_of_proc -p $PID $DAEMON $NAME
+    ;;
+  *)
+    log_action_msg "Usage: /etc/init.d/$NAME {start|stop|reload|restart|status}"
+    ;;
+esac
+
+exit 0

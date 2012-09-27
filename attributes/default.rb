@@ -1,3 +1,7 @@
+default[:vsftpd][:install_method]       =   "package"
+default[:vsftpd][:version]              =   "3.0.2"
+default[:vsftpd][:credential_storage]   =   "file"
+
 ### RUNTIME OPTIONS
 #
 default[:vsftpd][:ipaddress] = (node[:cloud] && node[:cloud][:public_ipv4]) || node[:ipaddress]
@@ -293,8 +297,6 @@ default[:vsftpd][:guest_enable] = false
 # include listen_address, banner_file, max_per_ip, max_clients, xferlog_file, etc.
 default[:vsftpd][:user_config_dir] = "/etc/vsftpd/users"
 #
-
-default[:vsftpd][:credential_storage] = "file"
 
 # File storage options
 # Where should vsfptd pam.d look for user passwords

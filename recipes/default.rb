@@ -1,4 +1,4 @@
-package "vsftpd"
+include_recipe "vsftpd::#{node['vsftpd']['install_method']}"
 
 service "vsftpd" do
   supports :status => true, :stop => true, :start => true, :restart => true
