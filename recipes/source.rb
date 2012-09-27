@@ -20,7 +20,7 @@ bash "compile_vsftpd_source" do
   cwd ::File.dirname(src_filepath)
   code <<-EOH
     tar zxf #{::File.basename(src_filepath)} -C #{::File.dirname(src_filepath)}
-    cd vsftpd-#{node[:vsftpd][:version]}.tar.gz
+    cd vsftpd-#{node[:vsftpd][:version]}
     make && make install
   EOH
 end
