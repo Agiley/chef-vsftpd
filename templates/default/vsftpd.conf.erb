@@ -3,6 +3,11 @@ listen_ipv6=YES
 <% else %>
 listen=YES
 <% end %>
+
+<% if node[:vsftpd][:background] %>
+background=YES
+<% end %>
+
 <% if node[:vsftpd][:pasv] %>
 pasv_enable=YES
 pasv_min_port=<%= node[:vsftpd][:pasv_min_port] %>

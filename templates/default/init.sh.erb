@@ -13,7 +13,7 @@ set -e
 
 . /lib/lsb/init-functions
 
-DAEMON=<%= @node[:vsftpd][:binary_path] %>
+DAEMON="<%= @node[:vsftpd][:binary_path] %>"
 CONFIG="<%= @node[:vsftpd][:config_path] %>"
 NAME="vsftpd"
 DESC="ftp service"
