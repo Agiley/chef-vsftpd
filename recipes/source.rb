@@ -19,6 +19,8 @@ node.set[:vsftpd][:binary_path] = "/usr/sbin/vsftpd"
 bash "compile_vsftpd_source" do
   cwd ::File.dirname(src_filepath)
   code <<-EOH
+    mkdir -p /usr/local/man/man8/
+    mkdir -p /usr/local/man/man5/
     tar zxf #{::File.basename(src_filepath)} -C #{::File.dirname(src_filepath)}
     cd vsftpd-#{node[:vsftpd][:version]}
     make && make install
