@@ -14,7 +14,7 @@ set -e
 . /lib/lsb/init-functions
 
 DAEMON=<%= @node[:vsftpd][:binary_path] %>
-CONFIG="/etc/vsftpd.conf"
+CONFIG="<%= @node[:vsftpd][:config_path] %>"
 NAME="vsftpd"
 DESC="ftp service"
 VSFTPD_OPTS=

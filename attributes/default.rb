@@ -2,6 +2,8 @@ default[:vsftpd][:install_method]       =   "package"
 default[:vsftpd][:version]              =   "3.0.2"
 default[:vsftpd][:credential_storage]   =   "file"
 
+default[:vsftpd][:config_path]          =   "/etc/vsftpd.conf"
+
 ### RUNTIME OPTIONS
 #
 default[:vsftpd][:ipaddress] = (node[:cloud] && node[:cloud][:public_ipv4]) || node[:ipaddress]

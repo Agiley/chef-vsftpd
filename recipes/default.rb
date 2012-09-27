@@ -5,7 +5,7 @@ service "vsftpd" do
   action :enable
 end
 
-template "/etc/vsftpd.conf" do
+template node[:vsftpd][:config_path] do
   owner "root"
   group "root"
   mode 0644

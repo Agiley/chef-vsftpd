@@ -15,6 +15,7 @@ remote_file source_url do
 end
 
 node.set[:vsftpd][:binary_path] = "/usr/sbin/vsftpd"
+node.set[:vsftpd][:config_path] = "/etc/vsftpd/vsftpd.conf"
 
 bash "compile_vsftpd_source" do
   cwd ::File.dirname(src_filepath)
