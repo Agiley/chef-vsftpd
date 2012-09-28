@@ -25,3 +25,13 @@ end
 if node['vsftpd']['virtual_users_enable']
   include_recipe "vsftpd::virtual_users"
 end
+
+directory node[:vsftpd][:secure_chroot_dir] do
+  owner "root"
+  group "root"
+  mode 0755
+  
+  not_if do
+    File.exists? node[:vsftpd][:secure_chroot_dir]
+  end
+end

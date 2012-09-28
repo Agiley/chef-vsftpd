@@ -111,6 +111,11 @@ default[:vsftpd][:chmod_enable] = true
 
 ### CHROOT OPTIONS
 #
+#This option should be the name of a directory which is empty. Also, the
+#directory should not be writable by the ftp user. This directory is used
+#as a secure chroot() jail at times vsftpd does not require filesystem access.
+default[:vsftpd][:secure_chroot_dir] = "/usr/share/empty"
+#
 # If set to true, local users will be (by default) placed in a chroot() jail
 # in their home directory after login.
 # NOTE!! THIS OPTION HAS SECURITY IMPLICATIONS, ESPECIALLY IF THE USERS

@@ -27,7 +27,7 @@ pid_from_file() {
 }
 
 current_pid() {
-  `ps -ef | egrep "$NAME.*" | grep -v grep | awk '{print $2}'`
+  `ps -ef | grep $NAME | grep -v grep | awk '{print $2}'`
 }
 
 start_vsftpd() {
@@ -68,7 +68,7 @@ stop_vsftpd() {
     counter=10
     stat=0
     while [ $end_message -eq 1 -a $stat -eq 0 -a $counter -gt 0 ]; do
-    	PIDS=current_pid
+    	PIDS=`current_pid`
     	
     	if [ "${PIDS}" = '' ]; then
     		stat=1
