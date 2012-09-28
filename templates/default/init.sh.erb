@@ -33,10 +33,18 @@ current_pid() {
 start_vsftpd() {
   log_daemon_msg "Starting $DESC" "$NAME"
   if start-stop-daemon \
-    --start --background --make-pidfile \
+    --start --background \
     --quiet --oknodo \
     --pidfile $PIDFILE --exec $DAEMON -- $VSFTPD_OPTS
   then
+    #--make-pidfile apparently saves the wrong pid in the pid file, resort to manually creating the pid-file.
+    if [ -f $PIDFILE ]; then
+      rm -f $PIDFILE
+    fi
+    
+    touch $PIDFILE
+    echo `current_pid` > $PIDFILE
+    
     log_end_msg 0
   else
     log_end_msg 1
@@ -48,8 +56,8 @@ stop_vsftpd() {
     
     log_daemon_msg "Stopping $DESC" "$NAME"
     if start-stop-daemon \
-        --stop --quiet --pidfile $PIDFILE \
-        --oknodo --exec $DAEMON -- $VSFTPD_OPTS
+      --retry TERM/5/KILL/5 --oknodo --stop --quiet \
+      --pidfile $PIDFILE --exec $DAEMON -- $VSFTPD_OPTS
     then
       end_message=0
     else
@@ -75,7 +83,6 @@ stop_vsftpd() {
     	else
     		echo -n '.'
     		kill -9 $PIDS
-        wait $PIDS 2>/dev/null
     		sleep 1
     		let counter--
     	fi
