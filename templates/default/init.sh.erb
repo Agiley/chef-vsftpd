@@ -3,20 +3,20 @@
 # vsftpd      This shell script takes care of starting and stopping
 #             standalone vsftpd.
 #
-# chkconfig: - 60 50
 # description: Vsftpd is a ftp daemon, which is the program \
 #              that answers incoming ftp service requests.
 # processname: vsftpd
-# config: /etc/vsftpd/vsftpd.conf
+# config:      <%= @node[:vsftpd][:config_path] %>
 
 set -e
 
 . /lib/lsb/init-functions
 
-DAEMON="<%= @node[:vsftpd][:binary_path] %>"
-CONFIG="<%= @node[:vsftpd][:config_path] %>"
+DAEMON=<%= @node[:vsftpd][:binary_path] %>
+CONFIG=<%= @node[:vsftpd][:config_path] %>
 NAME="vsftpd"
-DESC="ftp"
+DESC="ftp server"
+VSFTPD_OPTS=$CONFIG
 PIDFILE="/var/run/$NAME.pid"
 
 # Check if DAEMON binary exist
@@ -27,20 +27,16 @@ pid_from_file() {
 }
 
 current_pid() {
-  ps -ef | grep $NAME | grep -v grep | awk '{print $2}'
+  `ps -ef | egrep "$NAME.*" | grep -v grep | awk '{print $2}'`
 }
 
 start_vsftpd() {
   log_daemon_msg "Starting $DESC" "$NAME"
-  if start-stop-daemon --start --quiet --oknodo \
-                       --pidfile $PIDFILE --exec $DAEMON &
+  if start-stop-daemon \
+    --start --background --make-pidfile \
+    --quiet --oknodo \
+    --pidfile $PIDFILE --exec $DAEMON -- $VSFTPD_OPTS
   then
-    if [ -f $PIDFILE ]; then
-      rm -f $PIDFILE
-    fi
-    
-    touch $PIDFILE
-    echo `current_pid` > $PIDFILE
     log_end_msg 0
   else
     log_end_msg 1
@@ -52,8 +48,8 @@ stop_vsftpd() {
     
     log_daemon_msg "Stopping $DESC" "$NAME"
     if start-stop-daemon \
-        --stop --quiet --pidfile $PIDFILE --retry 10 \
-        --exec $DAEMON &
+        --stop --quiet --pidfile $PIDFILE \
+        --retry 10 --exec $DAEMON -- $VSFTPD_OPTS
     then
       end_message=0
     else
@@ -72,7 +68,7 @@ stop_vsftpd() {
     counter=10
     stat=0
     while [ $stat -eq 0 -a $counter -gt 0 ]; do
-    	PIDS=`ps -ef | egrep "$NAME.*" | grep -v grep | awk '{print $2}'`
+    	PIDS=current_pid
     	
     	if [ "${PIDS}" = '' ]; then
     		stat=1
@@ -100,9 +96,9 @@ stop_vsftpd() {
 reload_vsftpd() {
   log_daemon_msg "Reloading $DESC configuration" "$NAME"
   if start-stop-daemon \
-    --stop --signal HUP --quiet \
+    --stop --signal 1 --quiet \
     --oknodo --pidfile $PIDFILE \
-    --exec $DAEMON &
+    --exec $DAEMON -- $VSFTPD_OPTS
   then
     log_end_msg 0
   else
@@ -117,10 +113,10 @@ case "$1" in
   stop)
     stop_vsftpd
     ;;
-  reload)
+  reload|force-reload)
     reload_vsftpd
     ;;
-  restart|force-reload)
+  restart)
     $0 stop
     $0 start
     ;;
