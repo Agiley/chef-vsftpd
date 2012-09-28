@@ -16,50 +16,113 @@ set -e
 DAEMON="<%= @node[:vsftpd][:binary_path] %>"
 CONFIG="<%= @node[:vsftpd][:config_path] %>"
 NAME="vsftpd"
-DESC="ftp service"
-PID="/var/run/$NAME.pid"
+DESC="ftp"
+PIDFILE="/var/run/$NAME.pid"
 
 # Check if DAEMON binary exist
 [ -f $DAEMON ] || exit 0
 
+pid_from_file() {
+  echo $PIDFILE
+}
+
+current_pid() {
+  ps -ef | grep $NAME | grep -v grep | awk '{print $2}'
+}
+
+start_vsftpd() {
+  log_daemon_msg "Starting $DESC" "$NAME"
+  if start-stop-daemon --start --quiet --oknodo \
+                       --pidfile $PIDFILE --exec $DAEMON &
+  then
+    if [ -e $PIDFILE ] then; rm -f $PIDFILE; fi;
+    touch $PIDFILE
+    echo `current_pid` > $PIDFILE
+    log_end_msg 0
+  else
+    log_end_msg 1
+  fi
+}
+
+stop_vsftpd() {
+    end_message=0
+    
+    log_daemon_msg "Stopping $DESC" "$NAME"
+    if start-stop-daemon \
+        --stop --quiet --pidfile $PIDFILE --retry 10 \
+        --exec $DAEMON &
+    then
+      end_message=0
+    else
+      end_message=1
+    fi
+    
+    if test -r $PIDFILE; then
+      read -r PID < $PIDFILE
+      if test ! -d /proc/$PID ; then
+        # stale pidfile
+        unset PID
+        rm -f $PIDFILE
+      fi
+    fi
+    
+    counter=10
+    stat=0
+    while [ $stat -eq 0 -a $counter -gt 0 ]; do
+    	PIDS=`ps -ef | egrep "$NAME.*" | grep -v grep | awk '{print $2}'`
+    	
+    	if [ "${PIDS}" = '' ]; then
+    		stat=1
+    	else
+    		echo -n '.'
+    		kill -9 $PIDS
+    		sleep 1
+    		let counter--
+    	fi
+    done
+    
+    if [ $stat -eq 1 ]; then
+      end_message=0
+    else
+    	end_message=1
+    fi
+    
+    if [ -f $PIDFILE ]; then
+      rm -f $PIDFILE
+    fi
+    
+    log_end_msg $end_message
+}
+
+reload_vsftpd() {
+  log_daemon_msg "Reloading $DESC configuration" "$NAME"
+  if start-stop-daemon \
+    --stop --signal HUP --quiet \
+    --oknodo --pidfile $PIDFILE \
+    --exec $DAEMON &
+  then
+    log_end_msg 0
+  else
+    log_end_msg 1
+  fi
+}
+
 case "$1" in
   start)
-    log_daemon_msg "Starting $DESC" "$NAME"
-    if start-stop-daemon --start --quiet --oknodo \
-                         --pidfile $PID --exec $DAEMON &
-    then
-      log_end_msg 0
-    else
-      log_end_msg 1
-    fi
+    start_vsftpd
     ;;
   stop)
-    log_daemon_msg "Stopping $DESC" "$NAME"
-    if start-stop-daemon --retry TERM/5/KILL/5 --oknodo --stop --quiet \
-                         --pidfile $PID --exec $DAEMON &
-    then
-      log_end_msg 0
-    else
-      log_end_msg 1
-    fi
+    stop_vsftpd
     ;;
   reload)
-    log_daemon_msg "Reloading $DESC configuration" "$NAME"
-    if start-stop-daemon --stop --signal HUP --quiet \
-                                --oknodo --pidfile $PID \
-                                --exec $DAEMON &
-    then
-      log_end_msg 0
-    else
-      log_end_msg 1
-  fi
+    reload_vsftpd
     ;;
   restart|force-reload)
     $0 stop
     $0 start
     ;;
   status)
-    status_of_proc -p $PID $DAEMON $NAME
+    status_of_proc -p $PIDFILE $DAEMON $NAME
     ;;
   *)
     log_action_msg "Usage: /etc/init.d/$NAME {start|stop|reload|restart|status}"
