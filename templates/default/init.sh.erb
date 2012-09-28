@@ -27,7 +27,7 @@ pid_from_file() {
 }
 
 current_pid() {
-  `ps -ef | grep $NAME | grep -v grep | awk '{print $2}'`
+  ps -ef | grep $DAEMON | grep -v grep | awk '{print $2}'
 }
 
 start_vsftpd() {
@@ -49,7 +49,7 @@ stop_vsftpd() {
     log_daemon_msg "Stopping $DESC" "$NAME"
     if start-stop-daemon \
         --stop --quiet --pidfile $PIDFILE \
-        --exec $DAEMON -- $VSFTPD_OPTS
+        --oknodo --exec $DAEMON -- $VSFTPD_OPTS
     then
       end_message=0
     else
