@@ -61,12 +61,12 @@ stop_vsftpd() {
     fi
     
     if test -r $PIDFILE; then
-      read -r PID < $PIDFILE
-      if test ! -d /proc/$PID ; then
-        # stale pidfile
-        unset PID
-        rm -f $PIDFILE
-      fi
+        read -r PID < $PIDFILE
+        if test ! -d /proc/$PID ; then
+            # stale pidfile
+            unset PID
+            rm -f $PIDFILE
+        fi
     fi
     
     counter=10
