@@ -17,7 +17,6 @@ DAEMON="<%= @node[:vsftpd][:binary_path] %>"
 CONFIG="<%= @node[:vsftpd][:config_path] %>"
 NAME="vsftpd"
 DESC="ftp service"
-VSFTPD_OPTS=
 PID="/var/run/$NAME.pid"
 
 # Check if DAEMON binary exist
@@ -27,8 +26,7 @@ case "$1" in
   start)
     log_daemon_msg "Starting $DESC" "$NAME"
     if start-stop-daemon --start --quiet --oknodo \
-                         --pidfile $PID --exec $DAEMON \
-                         -- $VSFTPD_OPTS
+                         --pidfile $PID --exec $DAEMON &
     then
       log_end_msg 0
     else
@@ -38,7 +36,7 @@ case "$1" in
   stop)
     log_daemon_msg "Stopping $DESC" "$NAME"
     if start-stop-daemon --retry TERM/5/KILL/5 --oknodo --stop --quiet \
-                         --pidfile $PID --exec $DAEMON
+                         --pidfile $PID --exec $DAEMON &
     then
       log_end_msg 0
     else
@@ -49,7 +47,7 @@ case "$1" in
     log_daemon_msg "Reloading $DESC configuration" "$NAME"
     if start-stop-daemon --stop --signal HUP --quiet \
                                 --oknodo --pidfile $PID \
-                                --exec $DAEMON -- $VSFTPD_OPTS
+                                --exec $DAEMON &
     then
       log_end_msg 0
     else
