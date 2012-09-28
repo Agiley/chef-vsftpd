@@ -35,7 +35,10 @@ start_vsftpd() {
   if start-stop-daemon --start --quiet --oknodo \
                        --pidfile $PIDFILE --exec $DAEMON &
   then
-    if [ -e $PIDFILE ] then; rm -f $PIDFILE; fi;
+    if [ -f $PIDFILE ]; then
+      rm -f $PIDFILE
+    fi
+    
     touch $PIDFILE
     echo `current_pid` > $PIDFILE
     log_end_msg 0
