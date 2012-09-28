@@ -75,7 +75,7 @@ stop_vsftpd() {
     
     counter=10
     stat=0
-    while [ $end_message -eq 1 -a $stat -eq 0 -a $counter -gt 0 ]; do
+    while [ $stat -eq 0 -a $counter -gt 0 ]; do
     	PIDS=`current_pid`
     	
     	if [ "${PIDS}" = '' ]; then
