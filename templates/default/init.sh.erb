@@ -49,7 +49,7 @@ stop_vsftpd() {
     log_daemon_msg "Stopping $DESC" "$NAME"
     if start-stop-daemon \
         --stop --quiet --pidfile $PIDFILE \
-        --retry 10 --exec $DAEMON -- $VSFTPD_OPTS
+        --exec $DAEMON -- $VSFTPD_OPTS
     then
       end_message=0
     else
@@ -67,7 +67,7 @@ stop_vsftpd() {
     
     counter=10
     stat=0
-    while [ $stat -eq 0 -a $counter -gt 0 ]; do
+    while [ $end_message -eq 1 -a $stat -eq 0 -a $counter -gt 0 ]; do
     	PIDS=current_pid
     	
     	if [ "${PIDS}" = '' ]; then
@@ -75,6 +75,7 @@ stop_vsftpd() {
     	else
     		echo -n '.'
     		kill -9 $PIDS
+        wait $PIDS 2>/dev/null
     		sleep 1
     		let counter--
     	fi
