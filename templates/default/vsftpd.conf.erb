@@ -8,7 +8,7 @@ listen=YES
 background=YES
 <% end %>
 
-<% if node[:vsftpd][:install_mode].to_s == "source" %>
+<% if node[:vsftpd][:install_method].to_s == "source" && node[:vsftpd][:version] >= '3.0.0' %>
 seccomp_sandbox=<%= node[:vsftpd][:seccomp_sandbox] ? 'YES' : 'NO' %>
 allow_writeable_chroot=<%= node[:vsftpd][:allow_writeable_chroot] ? 'YES' : 'NO' %>
 <% end %>
