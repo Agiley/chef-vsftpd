@@ -41,14 +41,16 @@ action :add do
     notifies :restart, resources(:service => "vsftpd"), :delayed
   end
 
-  file "#{node[:vsftpd][:user_config_dir]}/#{new_resource.username}" do
-    owner "root"
-    group "root"
-    mode 0644
-    root = "local_root=#{new_resource.root.sub(%r!/\./.*!,'')}\n"
-    user = "guest_username=#{new_resource.local_user}\n" unless new_resource.local_user.to_s.empty?
-    content "#{root}#{user}"
-    notifies :restart, resources(:service => "vsftpd"), :delayed
+  if (node[:vsftpd][:create_user_configs])
+    file "#{node[:vsftpd][:user_config_dir]}/#{new_resource.username}" do
+      owner "root"
+      group "root"
+      mode 0644
+      root = "local_root=#{new_resource.root.sub(%r!/\./.*!,'')}\n"
+      user = "guest_username=#{new_resource.local_user}\n" unless new_resource.local_user.to_s.empty?
+      content "#{root}#{user}"
+      notifies :restart, resources(:service => "vsftpd"), :delayed
+    end
   end
 end
 

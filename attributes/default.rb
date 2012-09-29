@@ -1,8 +1,14 @@
-default[:vsftpd][:install_method]       =   "package"
-default[:vsftpd][:version]              =   "3.0.2"
-default[:vsftpd][:credential_storage]   =   "file"
+default[:vsftpd][:install_method]           =   :package
+default[:vsftpd][:version]                  =   3.0.2
+default[:vsftpd][:credential_storage]       =   "file"
 
-default[:vsftpd][:config_path]          =   "/etc/vsftpd.conf"
+default[:vsftpd][:config_path]              =   "/etc/vsftpd.conf"
+
+default[:vsftpd][:create_user_configs]      =   true
+
+### NEW OPTIONS FOR VSFTPD >= 3.0.0
+default[:vsftpd][:seccomp_sandbox]          =   false
+default[:vsftpd][:allow_writeable_chroot]   =   true
 
 ### RUNTIME OPTIONS
 #
@@ -23,6 +29,10 @@ default[:vsftpd][:dirmessage_enable] = false
 # rather than nobody. The user nobody tends to be used for rather
 # a lot of important things on most machines.
 default[:vsftpd][:nopriv_user] = "nobody"
+#
+# This is the name of the user we use for handling anonymous FTP. The home
+# directory of this user is the root of the anonymous FTP area.
+default[:vsftpd][:ftp_username] = "ftp"
 #
 # This string is the name of the PAM service vsftpd will use.
 default[:vsftpd][:pam_service_name] = "vsftpd"
@@ -48,7 +58,6 @@ default[:vsftpd][:pasv_min_port] = "1024"
 # The maximum port to allocate for PASV style data connections.
 # Can be used to specify a narrow port range to assist firewalling.
 default[:vsftpd][:pasv_max_port] = "1048"
-
 
 
 ### PERMISSIONS
@@ -197,6 +206,8 @@ default[:vsftpd][:ssl_tlsv1] = true
 # (Added in v2.0.6).
 default[:vsftpd][:debug_ssl] = false
 
+
+
 ### LOGGING OPTIONS
 #
 # If enabled, a log file will be maintained detailling uploads and downloads.
@@ -240,6 +251,7 @@ default[:vsftpd][:xferlog_std_format] = false
 default[:vsftpd][:log_ftp_protocol] = false
 
 
+
 ### SESSION AND SECURITY OPTIONS
 #
 # This controls whether PORT style data connections use port 20 (ftp-data)
@@ -273,6 +285,7 @@ default[:vsftpd][:deny_file] = []
 # If vsftpd is in standalone mode, this is the maximum number of clients
 # which may be connected from the same source internet address.
 # A client will get an error message if they go over this limit.
+# Default: 0 (unlimited)
 default[:vsftpd][:max_per_ip] = 0
 #
 # If enabled, all user and group information in directory listings will be

@@ -8,6 +8,11 @@ listen=YES
 background=YES
 <% end %>
 
+<% if node[:vsftpd][:install_mode].eql?(:source) && node[:vsftpd][:version] >= 3 %>
+seccomp_sandbox=<%= node[:vsftpd][:seccomp_sandbox] ? 'YES' : 'NO' %>
+allow_writeable_chroot=<%= node[:vsftpd][:allow_writeable_chroot] ? 'YES' : 'NO' %>
+<% end %>
+
 <% if node[:vsftpd][:pasv] %>
 pasv_enable=YES
 pasv_min_port=<%= node[:vsftpd][:pasv_min_port] %>
@@ -41,6 +46,7 @@ chmod_enable=<%= node[:vsftpd][:chmod_enable] ? 'YES' : 'NO' %>
 idle_session_timeout=<%= node[:vsftpd][:idle_session_timeout] %>
 data_connection_timeout=<%= node[:vsftpd][:data_connection_timeout] %>
 nopriv_user=<%= node[:vsftpd][:nopriv_user] %>
+ftp_username=<%= node[:vsftpd][:ftp_username] %>
 async_abor_enable=<%= node[:vsftpd][:async_abor_enable] ? 'YES' : 'NO' %>
 max_per_ip=<%= node[:vsftpd][:max_per_ip] %>
 chroot_local_user=<%= node[:vsftpd][:chroot_local_user] ? 'YES' : 'NO' %>

@@ -37,7 +37,7 @@ start_vsftpd() {
     --quiet --oknodo \
     --pidfile $PIDFILE --exec $DAEMON -- $VSFTPD_OPTS
   then
-    #--make-pidfile apparently saves the wrong pid in the pid file, resort to manually creating the pid-file.
+    #--make-pidfile apparently saves the wrong pid in the pid file, resort to manually create the pid-file.
     if [ -f $PIDFILE ]; then
       rm -f $PIDFILE
     fi
