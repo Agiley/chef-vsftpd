@@ -137,7 +137,7 @@ default[:vsftpd][:chroot_local_user] = true
 # be specified on a per-user basis. Each user's jail is derived from their home
 # directory string in /etc/passwd. The occurrence of /./ in the home directory
 # string denotes that the jail is at that particular location in the path.
-default[:vsftpd][:passwd_chroot_enable] = true
+default[:vsftpd][:passwd_chroot_enable] = false
 #
 # If activated, you may provide a list of local users who are placed
 # in a chroot() jail in their home directory upon login.
