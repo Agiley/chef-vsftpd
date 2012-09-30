@@ -3,7 +3,7 @@ CREATE DATABASE `<%= node[:vsftpd][:mysql][:database] %>`;
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP ON `<%= node[:vsftpd][:mysql][:database] %>`.* TO '<%= node[:vsftpd][:mysql][:user] %>'@'localhost' IDENTIFIED BY '<%= node[:vsftpd][:mysql][:password] %>';
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP ON `<%= node[:vsftpd][:mysql][:database] %>`.* TO '<%= node[:vsftpd][:mysql][:user] %>'@'localhost.localdomain' IDENTIFIED BY '<%= node[:vsftpd][:mysql][:password] %>';
 
-<% if [:vsftpd][:mysql][:allow_remote_login] %>
+<% if node[:vsftpd][:mysql][:allow_remote_login] %>
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP ON `<%= node[:vsftpd][:mysql][:database] %>`.* TO '<%= node[:vsftpd][:mysql][:user] %>'@'%' IDENTIFIED BY '<%= node[:vsftpd][:mysql][:password] %>';
 <% end %>
 
