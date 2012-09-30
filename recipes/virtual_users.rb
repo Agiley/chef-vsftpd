@@ -1,11 +1,9 @@
 package "openssl"
+package "libpam-pwdfile"
 
-case node[:vsftpd][:credential_storage].to_sym
-  when :file
-    package "libpam-pwdfile"
-  when :mysql
-    include_recipe "vsftpd::mysql"
-    package "libpam-mysql"
+if node[:vsftpd][:credential_storage].to_sym == :mysql
+  include_recipe "vsftpd::mysql"
+  package "libpam-mysql"
 end
 
 template "/etc/pam.d/vsftpd" do
