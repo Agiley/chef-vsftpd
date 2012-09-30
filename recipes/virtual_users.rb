@@ -3,7 +3,9 @@ package "libpam-pwdfile"
 
 if node[:vsftpd][:credential_storage].to_sym == :mysql
   include_recipe "vsftpd::mysql"
-  package "libpam-mysql"
+  %w{ libpam-chroot libpam-ldap libpam-mysql }.each do |pkg|
+    package pkg
+  end
 end
 
 template "/etc/pam.d/vsftpd" do
