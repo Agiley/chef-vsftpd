@@ -1,7 +1,4 @@
 action :add do
-  
-  Chef::Log.info "Adding new user_mysql-resource: #{new_resource.inspect}"
-  
   username = new_resource.username
   password = new_resource.password
   
