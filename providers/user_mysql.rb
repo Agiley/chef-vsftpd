@@ -1,4 +1,7 @@
 action :add do
+  
+  Chef::Log.info "Adding new user_mysql-resource: #{new_resource.inspect}"
+  
   execute_sql_file do
     template_cookbook "vsftpd"
     template_path     '/tmp/add_vsftpd_user.sql'

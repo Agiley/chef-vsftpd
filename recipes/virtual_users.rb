@@ -35,7 +35,7 @@ end
   end
   
   vsftpd_user u[:name] do
-    provider "vsftpd_user_#{node[:vsftpd][:credential_storage]}"
+    provider    "vsftpd_user_#{node[:vsftpd][:credential_storage]}"
     action      :add
     username    u[:name]
     password    u[:password]
