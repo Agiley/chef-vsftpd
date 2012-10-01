@@ -5,9 +5,7 @@ case node[:vsftpd][:credential_storage].to_sym
     package "libpam-pwdfile"
   when :mysql
     include_recipe "vsftpd::mysql"
-    %w{ libpam-ldap libpam-mysql }.each do |pkg|
-      package pkg
-    end
+    package "libpam-mysql"
 end
 
 template "/etc/pam.d/vsftpd" do

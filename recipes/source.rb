@@ -3,7 +3,7 @@ include_recipe "build-essential"
 source_url        =   "https://security.appspot.com/downloads/vsftpd-#{node[:vsftpd][:version]}.tar.gz"
 src_filepath      =   "#{Chef::Config['file_cache_path'] || '/tmp'}/vsftpd-#{node[:vsftpd][:version]}.tar.gz"
 
-packages          =   ['libssl-dev', 'libpam0g-dev', 'libcap2']
+packages          =   ['libssl-dev', 'libpam0g-dev', 'libcap2', 'libpam-ldap']
 packages.each do |dev_pkg|
   package dev_pkg
 end
