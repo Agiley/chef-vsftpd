@@ -3,7 +3,7 @@ include_recipe "build-essential"
 source_url        =   "https://security.appspot.com/downloads/vsftpd-#{node[:vsftpd][:version]}.tar.gz"
 src_filepath      =   "#{Chef::Config['file_cache_path'] || '/tmp'}/vsftpd-#{node[:vsftpd][:version]}.tar.gz"
 
-packages          =   ['libssl-dev', 'libpam0g-dev', 'libcap2', 'libpam-ldap']
+packages          =   ['lib32gcc1', 'libssl-dev', 'libpam0g-dev', 'libcap2']
 packages.each do |dev_pkg|
   package dev_pkg
 end
@@ -24,6 +24,7 @@ bash "compile_vsftpd_source" do
     mkdir -p /usr/local/man/man8/
     mkdir -p /usr/local/man/man5/
     tar zxf #{::File.basename(src_filepath)} -C #{::File.dirname(src_filepath)}
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib32
     cd vsftpd-#{node[:vsftpd][:version]} && ./configure
     make && make install
   EOH
