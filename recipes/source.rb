@@ -24,7 +24,7 @@ bash "compile_vsftpd_source" do
     mkdir -p /usr/local/man/man8/
     mkdir -p /usr/local/man/man5/
     tar zxf #{::File.basename(src_filepath)} -C #{::File.dirname(src_filepath)}
-    export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu/:/usr/lib32
+    export LD_LIBRARY_PATH=/usr/lib32
     cd vsftpd-#{node[:vsftpd][:version]} && ./configure
     make && make install
   EOH
