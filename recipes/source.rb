@@ -14,8 +14,8 @@ remote_file source_url do
   backup false
 end
 
-node.set[:vsftpd][:binary_path] = "/usr/local/sbin/vsftpd"
-node.set[:vsftpd][:background]  = true
+node.default[:vsftpd][:binary_path] = "/usr/local/sbin/vsftpd"
+node.default[:vsftpd][:background]  = true
 
 bash "compile_vsftpd_source" do
   cwd ::File.dirname(src_filepath)
